@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <raylib.h>
 
 #define MAT_AT(mat, y, x) (mat)[(y) * state.cols + (x)]
@@ -105,7 +104,8 @@ void explosion(int *board) {
 
 int main() {
     InitWindow(1280, 720, "Game of Life");
-    SetTargetFPS(60);
+    SetTargetFPS(12);
+    state.paused = true;
 
     state.rows = GetScreenHeight() / (CELL_SIZE + PAD);
     state.cols = GetScreenWidth() / (CELL_SIZE + PAD);
@@ -115,8 +115,6 @@ int main() {
     int *current = board;
     int *next = next_board;
     
-    explosion(current);
-
     while (!WindowShouldClose()) {
         BeginDrawing();                                                                          
         print_board_gui(current);
@@ -128,8 +126,6 @@ int main() {
 
         if (!state.paused) {
             game_of_life(current, next);
-            usleep(100*1000);
-
             int *tmp = current;
             current = next;
             next = tmp;
