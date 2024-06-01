@@ -49,33 +49,6 @@ void game_of_life(int *current, int *next) {
     }
 }
 
-void print_board_cli(int *current) {
-    for (int y = 0; y < state.rows; y++) {
-        for (int x = 0; x < state.cols; x++) {
-            if (MAT_AT(current, y, x)) {
-                printf("#");
-            } else {
-                printf(".");
-            }
-        }
-        printf("\n");
-    }
-}
-
-
-void cli(int *current, int *next, int tick_ms) {
-    while (1) {
-        print_board_cli(current);
-        game_of_life(current, next);
-        printf("\033[%dA\033[%dD", state.rows, state.cols);
-        usleep(tick_ms*1000);
-
-        int *tmp = current;
-        current = next;
-        next = tmp;
-    }
-}
-
 void print_board_gui(int *current) {
     ClearBackground(GRAY);                                                                   
     int y = 0;
@@ -110,6 +83,26 @@ void print_board_gui(int *current) {
     }    
 }
 
+// Creates the glider on the board
+void glider(int *board) {
+    MAT_AT(board, 2, 1) = 1;
+    MAT_AT(board, 3, 2) = 1;
+    MAT_AT(board, 4, 0) = 1;
+    MAT_AT(board, 4, 1) = 1;
+    MAT_AT(board, 4, 2) = 1;
+}
+
+// Creates an explosion of cells on the board
+void explosion(int *board) {
+    int mid_x = state.cols/2;
+    int mid_y = state.rows/2;
+    MAT_AT(board, mid_y+1, mid_x+0) = 1;
+    MAT_AT(board, mid_y+1, mid_x+1) = 1;
+    MAT_AT(board, mid_y+1, mid_x+2) = 1;
+    MAT_AT(board, mid_y+2, mid_x+2) = 1;
+    MAT_AT(board, mid_y+0, mid_x+1) = 1;
+}
+
 int main() {
     InitWindow(1280, 720, "Game of Life");
     SetTargetFPS(60);
@@ -119,14 +112,10 @@ int main() {
     int *board = calloc(state.rows*state.cols, sizeof(int));
     int *next_board = calloc(state.rows*state.cols, sizeof(int));
 
-    // MAT_AT(board, 2, 1) = 1;
-    // MAT_AT(board, 3, 2) = 1;
-    // MAT_AT(board, 4, 0) = 1;
-    // MAT_AT(board, 4, 1) = 1;
-    // MAT_AT(board, 4, 2) = 1;
-
     int *current = board;
     int *next = next_board;
+    
+    explosion(current);
 
     while (!WindowShouldClose()) {
         BeginDrawing();                                                                          
