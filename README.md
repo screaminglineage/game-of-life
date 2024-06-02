@@ -2,7 +2,7 @@
 
 [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) implemented in C using [Raylib](https://github.com/raysan5/raylib).
 
-https://github.com/screaminglineage/game-of-life/assets/106450040/505425f8-089a-4df8-a297-2fdbb785afaf
+https://github.com/screaminglineage/game-of-life/assets/106450040/1b0104a9-3afe-4029-935b-1da906f20622
 
 # Building
 
