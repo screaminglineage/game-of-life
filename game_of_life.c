@@ -8,10 +8,25 @@
 #define CELL_SIZE 20
 #define PAD 2
 
+enum MODES {
+    MODE_PLAY,
+    MODE_PAUSE,
+    MODE_EDIT,
+    MODE_STEP,
+    MODE_COUNT // total no. of modes
+};
+
+const char *MODES[MODE_COUNT] = {
+    [MODE_PLAY] = "Play",
+    [MODE_PAUSE] = "Paused",
+    [MODE_EDIT] = "Edit",
+    [MODE_STEP] = "Step",
+};
+
 typedef struct {
     int rows;
     int cols;
-    bool paused;
+    int mode;
 } GameState;
 
 GameState state = {0};
@@ -33,6 +48,12 @@ int count_neigbours(int x, int y, int *board) {
         }
     }
     return count;
+}
+
+void swap_pointers(int **a, int **b) {
+    int *tmp = *a;
+    *a = *b;
+    *b = tmp;
 }
 
 void game_of_life(int *current, int *next) {
@@ -59,7 +80,7 @@ void print_board_gui(int *current) {
             int x = start_x + i*(CELL_SIZE + PAD);
             int y = start_y + j*(CELL_SIZE + PAD);
             
-            if (state.paused) {
+            if (state.mode == MODE_EDIT) {
                 Vector2 mouse = GetMousePosition();
                 Rectangle box = {x, y, CELL_SIZE, CELL_SIZE};
                 if (CheckCollisionPointRec(mouse, box)) {                                                     
@@ -103,12 +124,12 @@ void explosion(int *board) {
 }
 
 int main() {
-    InitWindow(1280, 720, "Game of Life");
+    InitWindow(1600, 900, "Game of Life");
     SetTargetFPS(60);
-    state.paused = true;
+    state.mode = MODE_EDIT;
 
-    state.rows = GetScreenHeight() / (CELL_SIZE + PAD);
-    state.cols = GetScreenWidth() / (CELL_SIZE + PAD);
+    state.rows = GetScreenHeight() / (CELL_SIZE + PAD) - PAD;
+    state.cols = GetScreenWidth() / (CELL_SIZE + PAD) - PAD;
     int *board = calloc(state.rows*state.cols, sizeof(int));
     int *next_board = calloc(state.rows*state.cols, sizeof(int));
 
@@ -118,18 +139,46 @@ int main() {
     while (!WindowShouldClose()) {
         BeginDrawing();                                                                          
         print_board_gui(current);
+        DrawText(MODES[state.mode], 0, 0, 30, WHITE); 
         EndDrawing();
 
         if (IsKeyPressed(KEY_SPACE)) {
-            state.paused = !state.paused;
+            switch (state.mode) {
+                case MODE_PLAY:
+                    state.mode = MODE_PAUSE;
+                    break;
+                default:
+                    state.mode = MODE_PLAY;
+                    break;
+            }
         }
 
-        if (!state.paused) {
+        if (state.mode != MODE_PAUSE) {
+            if (IsKeyPressed(KEY_E)) {
+                state.mode = MODE_EDIT;     
+            }
+
+            if (IsKeyPressed(KEY_S)) {
+                switch (state.mode) {
+                    case MODE_STEP:
+                        game_of_life(current, next);
+                        swap_pointers(&current, &next);
+                        break;
+                    case MODE_PLAY:
+                        state.mode = MODE_STEP;
+                    default:
+                        state.mode = MODE_STEP;
+                        game_of_life(current, next);
+                        swap_pointers(&current, &next);
+                        break;
+                }
+            }
+        }
+
+        if (state.mode == MODE_PLAY) {
             game_of_life(current, next);
+            swap_pointers(&current, &next);
             WaitTime(0.07);
-            int *tmp = current;
-            current = next;
-            next = tmp;
         }
     }
     CloseWindow(); 
