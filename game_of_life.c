@@ -50,36 +50,36 @@ void game_of_life(int *current, int *next) {
 
 void print_board_gui(int *current) {
     ClearBackground(GRAY);                                                                   
-    int y = 0;
+    // For centering the grid
+    int start_x = (GetScreenWidth() - (state.cols * (CELL_SIZE + PAD) - PAD)) / 2;
+    int start_y = (GetScreenHeight() - (state.rows * (CELL_SIZE + PAD) - PAD)) / 2;;
+
     for (int j = 0; j < state.rows; j++) {                                                   
-        int x = 0;                                                                           
         for (int i = 0; i < state.cols; i++) {                                               
-            int current_x = x + i*CELL_SIZE;
-            int current_y = y + j*CELL_SIZE;
+            int x = start_x + i*(CELL_SIZE + PAD);
+            int y = start_y + j*(CELL_SIZE + PAD);
             
             if (state.paused) {
                 Vector2 mouse = GetMousePosition();
-                Rectangle box = {current_x, current_y, CELL_SIZE, CELL_SIZE};
+                Rectangle box = {x, y, CELL_SIZE, CELL_SIZE};
                 if (CheckCollisionPointRec(mouse, box)) {                                                     
-                    DrawRectangle(current_x, current_y, CELL_SIZE, CELL_SIZE, RED);
+                    DrawRectangle(x, y, CELL_SIZE, CELL_SIZE, RED);
                     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
                         MAT_AT(current, j, i) = 1;
-                        DrawRectangle(current_x, current_y, CELL_SIZE, CELL_SIZE, WHITE);
+                        DrawRectangle(x, y, CELL_SIZE, CELL_SIZE, WHITE);
                     }
                     if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
                         MAT_AT(current, j, i) = 0;
-                        DrawRectangle(current_x, current_y, CELL_SIZE, CELL_SIZE, BLACK);
+                        DrawRectangle(x, y, CELL_SIZE, CELL_SIZE, BLACK);
                     }
                 } else {
-                    DrawRectangle(current_x, current_y, CELL_SIZE, CELL_SIZE, MAT_AT(current, j, i) ? WHITE : BLACK);
+                    DrawRectangle(x, y, CELL_SIZE, CELL_SIZE, MAT_AT(current, j, i) ? WHITE : BLACK);
                 }                
             } else {
-                DrawRectangle(current_x, current_y, CELL_SIZE, CELL_SIZE, MAT_AT(current, j, i) ? WHITE : BLACK);
+                DrawRectangle(x, y, CELL_SIZE, CELL_SIZE, MAT_AT(current, j, i) ? WHITE : BLACK);
             }
-            x += PAD;                                                                        
         }                                                                                    
-        y += PAD;                                                                            
-    }    
+    }
 }
 
 // Creates the glider on the board
@@ -104,7 +104,7 @@ void explosion(int *board) {
 
 int main() {
     InitWindow(1280, 720, "Game of Life");
-    SetTargetFPS(12);
+    SetTargetFPS(60);
     state.paused = true;
 
     state.rows = GetScreenHeight() / (CELL_SIZE + PAD);
@@ -126,6 +126,7 @@ int main() {
 
         if (!state.paused) {
             game_of_life(current, next);
+            WaitTime(0.07);
             int *tmp = current;
             current = next;
             next = tmp;
