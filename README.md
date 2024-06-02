@@ -15,6 +15,8 @@ gcc game_of_life.c -O3 -lraylib -o game_of_life
 
 # Controls
 
-- `SPACE` - Pause/Unpause simulation and enter/exit edit mode
-  - Use Left and Right mouse buttons can be used to add or remove cells while in edit mode
+- `SPACE` - Play/Pause the simulation
+- `E` - Enter edit mode
+  - Use `Left` and `Right` mouse buttons can be used to add or remove cells while in edit mode
+- `S` - Enter step mode (Keep pressing `S` to step through each generation)
 - `ESC` - Quit
