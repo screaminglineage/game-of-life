@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 #include <raylib.h>
 
 #define MAT_AT(mat, y, x) (mat)[(y) * state.cols + (x)]
@@ -152,10 +153,14 @@ int main() {
                     break;
             }
         }
-
+        
         if (state.mode != MODE_PAUSE) {
             if (IsKeyPressed(KEY_E)) {
                 state.mode = MODE_EDIT;     
+            }
+
+            if (IsKeyPressed(KEY_C)) {
+                memset(current, 0, state.rows * state.cols * sizeof(*board));
             }
 
             if (IsKeyPressed(KEY_S)) {
@@ -166,6 +171,7 @@ int main() {
                         break;
                     case MODE_PLAY:
                         state.mode = MODE_STEP;
+                        break;
                     default:
                         state.mode = MODE_STEP;
                         game_of_life(current, next);

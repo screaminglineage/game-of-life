@@ -19,4 +19,5 @@ gcc game_of_life.c -O3 -lraylib -o game_of_life
 - `E` - Enter edit mode
   - Use `Left` and `Right` mouse buttons to add or remove cells while in edit mode
 - `S` - Enter step mode (Keep pressing `S` to step through each generation)
+- `C` - Clear the screen
 - `ESC` - Quit
