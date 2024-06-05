@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <time.h>
 #include <string.h>
 #include <raylib.h>
 
@@ -67,6 +68,13 @@ void game_of_life(int *current, int *next) {
                 MAT_AT(next, y, x) = (neighbours == 3);
             }
         }
+    }
+}
+
+void fill_random(int *current) {
+    srand(time(NULL));
+    for (int i = 0; i < state.rows*state.cols; i++) {
+        current[i] = rand() % 2;
     }
 }
 
@@ -157,6 +165,10 @@ int main() {
         if (state.mode != MODE_PAUSE) {
             if (IsKeyPressed(KEY_E)) {
                 state.mode = MODE_EDIT;     
+            }
+
+            if (IsKeyPressed(KEY_R)) {
+                fill_random(current);
             }
 
             if (IsKeyPressed(KEY_C)) {
