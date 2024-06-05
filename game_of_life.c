@@ -7,7 +7,7 @@
 #define MAT_AT(mat, y, x) (mat)[(y) * state.cols + (x)]
 
 #define CELL_SIZE 20
-#define PAD 2
+#define PADDING 30
 
 enum MODES {
     MODE_PLAY,
@@ -73,13 +73,13 @@ void game_of_life(int *current, int *next) {
 void print_board_gui(int *current) {
     ClearBackground(GRAY);                                                                   
     // For centering the grid
-    int start_x = (GetScreenWidth() - (state.cols * (CELL_SIZE + PAD) - PAD)) / 2;
-    int start_y = (GetScreenHeight() - (state.rows * (CELL_SIZE + PAD) - PAD)) / 2;;
+    int start_x =  PADDING;
+    int start_y = PADDING;
 
     for (int j = 0; j < state.rows; j++) {                                                   
         for (int i = 0; i < state.cols; i++) {                                               
-            int x = start_x + i*(CELL_SIZE + PAD);
-            int y = start_y + j*(CELL_SIZE + PAD);
+            int x = start_x + i*CELL_SIZE;
+            int y = start_y + j*CELL_SIZE;
             
             if (state.mode == MODE_EDIT) {
                 Vector2 mouse = GetMousePosition();
@@ -129,8 +129,8 @@ int main() {
     SetTargetFPS(60);
     state.mode = MODE_EDIT;
 
-    state.rows = GetScreenHeight() / (CELL_SIZE + PAD) - PAD;
-    state.cols = GetScreenWidth() / (CELL_SIZE + PAD) - PAD;
+    state.rows = (GetScreenHeight() - PADDING*2) / CELL_SIZE;
+    state.cols = (GetScreenWidth() -PADDING*2) / CELL_SIZE;
     int *board = calloc(state.rows*state.cols, sizeof(int));
     int *next_board = calloc(state.rows*state.cols, sizeof(int));
 
